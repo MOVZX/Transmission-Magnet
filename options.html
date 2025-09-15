@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" />
         <title>Magnet to Transmission Settings</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -181,11 +181,48 @@
 
             <div class="setting">
                 <div>
+                    <div class="label">Enable Authentication</div>
+                    <div class="description">Use a username and password for RPC authentication.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="auth-enabled" />
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div id="auth-credentials" style="display: none;">
+                <div class="setting">
+                    <div>
+                        <div class="label">Username</div>
+                    </div>
+                    <input type="text" id="username" style="max-width: 250px" />
+                </div>
+                <div class="setting">
+                    <div>
+                        <div class="label">Password</div>
+                    </div>
+                    <input type="password" id="password" style="max-width: 250px" />
+                </div>
+            </div>
+
+            <div class="setting">
+                <div>
                     <div class="label">Add Paused</div>
                     <div class="description">Add new torrents in a paused state.</div>
                 </div>
                 <label class="switch">
                     <input type="checkbox" id="paused" />
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting">
+                <div>
+                    <div class="label">Torrent File Support</div>
+                    <div class="description">Forward .torrent file links to Transmission.</div>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="torrent-support" />
                     <span class="slider"></span>
                 </label>
             </div>

@@ -5,14 +5,16 @@
 </p>
 
 <p align="center">
-  A simple Chrome extension that sends clicked magnet links directly to your Transmission BitTorrent client.
+  A simple Chrome extension that sends clicked magnet links and `.torrent` files directly to your Transmission BitTorrent client.
 </p>
 
 ---
 
 ## Features
 
--   **One-Click Sending:** Automatically intercepts magnet link clicks and sends them to your Transmission client.
+-   **One-Click Sending:** Automatically intercepts magnet link and `.torrent` file clicks and sends them to your Transmission client.
+-   **`.torrent` File Support:** Forwards `.torrent` file links directly to Transmission, just like magnet links. This can be toggled in the settings.
+-   **Authentication Support:** Securely connect to your Transmission client with optional username and password authentication.
 -   **Seamless Integration:** Works on any webpage without interfering with your browsing.
 -   **Configurable:** Easily configure your Transmission server settings.
 -   **Add Paused:** Option to add torrents in a paused state, giving you control over when they start downloading.
@@ -43,6 +45,8 @@ The following options are available in the settings popup:
 -   **Transmission RPC URL:** The full URL for your Transmission RPC endpoint.
 -   **Add Paused:** If enabled, new torrents will be added in a paused state.
 -   **Notifications:** If enabled, a desktop notification will be shown on success or error.
+-   **Torrent File Support:** If enabled, the extension will intercept clicks on `.torrent` file links.
+-   **Enable Authentication:** If enabled, you can provide a username and password to authenticate with your Transmission client.
 
 ## License
 

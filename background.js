@@ -7,46 +7,54 @@ function showNotification(title, message) {
     });
 }
 
-async function addMagnetToTransmission(magnetLink) {
+async function addTorrentToTransmission(torrent, isMagnet = true) {
     const settings = await chrome.storage.sync.get({
         transmissionUrl: "http://192.168.8.2:9090/transmission/rpc",
         addPaused: true,
         showNotifications: true,
+        authEnabled: false,
+        username: "",
+        password: "",
     });
 
-    const { transmissionUrl, addPaused, showNotifications } = settings;
+    const { transmissionUrl, addPaused, showNotifications, authEnabled, username, password } = settings;
+
+    const requestBody = {
+        method: "torrent-add",
+        arguments: {
+            paused: addPaused,
+        },
+    };
+
+    if (isMagnet) {
+        requestBody.arguments.filename = torrent;
+    } else {
+        requestBody.arguments.metainfo = torrent;
+    }
 
     try {
+        const headers = {
+            "Content-Type": "application/json",
+        };
+
+        if (authEnabled) {
+            headers["Authorization"] = "Basic " + btoa(`${username}:${password}`);
+        }
+
         let response = await fetch(transmissionUrl, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                method: "torrent-add",
-                arguments: {
-                    filename: magnetLink,
-                    paused: addPaused,
-                },
-            }),
+            headers: headers,
+            body: JSON.stringify(requestBody),
         });
 
         if (response.status === 409) {
             const sessionId = response.headers.get("X-Transmission-Session-Id");
+            headers["X-Transmission-Session-Id"] = sessionId;
 
             response = await fetch(transmissionUrl, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-Transmission-Session-Id": sessionId,
-                },
-                body: JSON.stringify({
-                    method: "torrent-add",
-                    arguments: {
-                        filename: magnetLink,
-                        paused: addPaused,
-                    },
-                }),
+                headers: headers,
+                body: JSON.stringify(requestBody),
             });
         }
 
@@ -74,6 +82,22 @@ async function addMagnetToTransmission(magnetLink) {
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     if (msg.type === "magnetClicked") {
-        addMagnetToTransmission(msg.magnet);
+        addTorrentToTransmission(msg.magnet);
+    } else if (msg.type === "torrentFileClicked") {
+        fetch(msg.url)
+            .then((response) => response.blob())
+            .then((blob) => {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    const base64 = reader.result.split(",")[1];
+                    addTorrentToTransmission(base64, false);
+                };
+                reader.readAsDataURL(blob);
+            })
+            .catch((error) => {
+                if (showNotifications) {
+                    showNotification("Download Error", "Failed to download the .torrent file.");
+                }
+            });
     }
 });

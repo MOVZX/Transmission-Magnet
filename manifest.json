@@ -5,7 +5,7 @@
     "description": "Send clicked magnet links directly to Transmission.",
     "author": "MOVZX",
     "homepage_url": "https://github.com/MOVZX/Transmission-Magnet",
-    "permissions": ["scripting", "notifications", "storage"],
+    "permissions": ["scripting", "notifications", "storage", "declarativeNetRequest"],
     "icons": {
         "128": "icon.png"
     },
@@ -22,5 +22,14 @@
             "js": ["content.js"],
             "run_at": "document_start"
         }
-    ]
+    ],
+    "declarative_net_request": {
+        "rule_resources": [
+            {
+                "id": "ruleset_1",
+                "enabled": true,
+                "path": "rules.json"
+            }
+        ]
+    }
 }
