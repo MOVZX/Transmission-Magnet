@@ -6,7 +6,7 @@ document.addEventListener("click", function (e) {
 
         chrome.runtime.sendMessage({
             type: "magnetClicked",
-            magnet: link.href
+            magnet: link.href,
         });
     }
 });

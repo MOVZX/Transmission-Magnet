@@ -3,25 +3,21 @@
     "name": "Magnet to Transmission",
     "version": "1.1",
     "description": "Send clicked magnet links directly to Transmission.",
-    "permissions": [
-        "scripting",
-        "notifications",
-        "storage"
-    ],
+    "author": "MOVZX",
+    "homepage_url": "https://github.com/MOVZX/Transmission-Magnet",
+    "permissions": ["scripting", "notifications", "storage"],
     "icons": {
         "128": "icon.png"
     },
-    "options_ui": {
-        "page": "options.html",
-        "open_in_tab": true
+    "action": {
+        "default_popup": "options.html"
     },
     "background": {
         "service_worker": "background.js"
     },
-    "host_permissions": [
-        "<all_urls>"
-    ],
-    "content_scripts": [{
+    "host_permissions": ["<all_urls>"],
+    "content_scripts": [
+        {
             "matches": ["<all_urls>"],
             "js": ["content.js"],
             "run_at": "document_start"

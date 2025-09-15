@@ -1,52 +1,52 @@
 function showNotification(title, message) {
     chrome.notifications.create({
-        type: 'basic',
-        iconUrl: 'icon.png',
+        type: "basic",
+        iconUrl: "icon.png",
         title: title,
-        message: message
+        message: message,
     });
 }
 
 async function addMagnetToTransmission(magnetLink) {
     const settings = await chrome.storage.sync.get({
-        transmissionUrl: 'http://192.168.8.2:9090/transmission/rpc',
+        transmissionUrl: "http://192.168.8.2:9090/transmission/rpc",
         addPaused: true,
-        showNotifications: true
+        showNotifications: true,
     });
 
     const { transmissionUrl, addPaused, showNotifications } = settings;
 
     try {
         let response = await fetch(transmissionUrl, {
-            method: 'POST',
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                method: 'torrent-add',
+                method: "torrent-add",
                 arguments: {
                     filename: magnetLink,
-                    paused: addPaused
-                }
-            })
+                    paused: addPaused,
+                },
+            }),
         });
 
         if (response.status === 409) {
-            const sessionId = response.headers.get('X-Transmission-Session-Id');
+            const sessionId = response.headers.get("X-Transmission-Session-Id");
 
             response = await fetch(transmissionUrl, {
-                method: 'POST',
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Transmission-Session-Id': sessionId
+                    "Content-Type": "application/json",
+                    "X-Transmission-Session-Id": sessionId,
                 },
                 body: JSON.stringify({
-                    method: 'torrent-add',
+                    method: "torrent-add",
                     arguments: {
                         filename: magnetLink,
-                        paused: addPaused
-                    }
-                })
+                        paused: addPaused,
+                    },
+                }),
             });
         }
 
@@ -57,23 +57,23 @@ async function addMagnetToTransmission(magnetLink) {
         const data = await response.json();
 
         if (showNotifications) {
-            if (data.result === 'success') {
-                const torrentName = data.arguments['torrent-added']?.name || 'Torrent';
+            if (data.result === "success") {
+                const torrentName = data.arguments["torrent-added"]?.name || "Torrent";
 
-                showNotification('Torrent Added', `${torrentName} was sent to Transmission.`);
+                showNotification("Torrent Added", `${torrentName} was sent to Transmission.`);
             } else {
-                showNotification('Transmission Error', `Failed to add torrent: ${data.result}`);
+                showNotification("Transmission Error", `Failed to add torrent: ${data.result}`);
             }
         }
     } catch (error) {
         if (showNotifications) {
-            showNotification('Connection Error', 'Could not connect to Transmission RPC.');
+            showNotification("Connection Error", "Could not connect to Transmission RPC.");
         }
     }
 }
 
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-    if (msg.type === 'magnetClicked') {
+    if (msg.type === "magnetClicked") {
         addMagnetToTransmission(msg.magnet);
     }
 });
